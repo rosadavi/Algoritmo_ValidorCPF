@@ -1,67 +1,43 @@
-const algoritmoCPF = function(){
+const cpf = new validaCPF('Insira um CPF aqui.');
 
-    const campoCpf = document.querySelector('#campoCpf');
-    const btnValidar = document.querySelector('#btnValidar');
-    const campoResultado = document.querySelector('#campoResultado');
-
-    btnValidar.addEventListener('click', ()=> {
-        return receberCpf(campoCpf.value);
+function validaCPF(cpf) {
+    Object.defineProperty(this, 'cpfLimpo', {
+        enumerable: true,
+        get: function() {
+            return cpf.replace(/\D+/g, '');;
+        }
     });
+}
 
-    document.addEventListener('keypress', (e)=>{
-        e.key == 'Enter' ? receberCpf(campoCpf.value) : '';
-    });
+validaCPF.prototype.valida = function() {
+    if(typeof this.cpfLimpo === 'undefined') return false;
+    if(this.cpfLimpo.length !== 11) return false;
+    if(this.isSequencia()) return false;
 
-    function receberCpf(valor) {
-        const array = Array.from(valor);
-        removerDigitos(array)
-    }
+    const cpfParcial = this.cpfLimpo.slice(0, -2);
+    const digito1 = this.validaDigito(cpfParcial);
+    const digito2 = this.validaDigito(cpfParcial + digito1);
 
-    function removerDigitos(valor) {
-        valor.pop();
-        valor.pop();
-        multiplicacao(valor);
-    }
-
-    function multiplicacao(array) {
-        let soma = 0;
-        array.reverse();
-        for(let i = 2; i <= array.length + 1; i++) {
-            let mult = array[i - 2] * i;
-            soma += mult;
-        };
-        digito(soma, array);
-    }
-
-    function digito(valor, array) {
-        let calculo = 11 - (valor % 11);
-        calculo > 9 ? calculo = 0 : calculo;
-        array.reverse();
-        array.push(calculo);
-        adicionarDigitos(array);
-    }
-
-    function adicionarDigitos(array) {
-        let soma = 0;
-        for(let i = array.length + 1; i >= 2; i--) {
-            let mult = array[i - 2] * i;
-            soma += mult;
-        };
-        let calculo = 11 - (soma % 11);
-        calculo > 9 ? calculo = 0 : calculo; 
-        array.push(calculo);
-        const d1 = array.pop();
-        const d2 = array.pop();
-    validacao(d1, d2);
-    }
-
-    function validacao(d1, d2) {
-        const arrayOriginal = Array.from(campoCpf.value);
-        const d1Original = arrayOriginal.pop();
-        const d2Original = arrayOriginal.pop();
-        d1Original == d1 && d2Original == d2 ? campoResultado.innerHTML = `CPF válido` : campoResultado.innerHTML = `CPF inválido`;
-    }
-
+    const novoCpf = cpfParcial + digito1 + digito2;
+    return novoCpf === this.cpfLimpo;
 };
 
-algoritmoCPF();
+validaCPF.prototype.validaDigito = function(cpf) {
+    const cpfArray = Array.from(cpf);
+
+    let regressivo = cpfArray.length + 1;
+    const total = cpfArray.reduce((ac, valor)=>{
+        ac += (regressivo * Number(valor));
+        regressivo--;
+        return ac;
+    }, 0);
+    const digito = 11 - (total % 11);
+    return digito > 9 ? '0' : String(digito);
+};
+
+validaCPF.prototype.isSequencia = function() {
+    const sequencia = this.cpfLimpo[0].repeat(this.cpfLimpo.length);
+    return sequencia === this.cpfLimpo;
+};
+
+console.log(cpf.valida() ? `CPF VÁLIDO` : `CPF INVÁLIDO`);
