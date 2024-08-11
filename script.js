@@ -1,4 +1,4 @@
-const cpf = new validaCPF('Insira um CPF aqui.');
+const cpf = new validaCPF('000.000.000-00'); // Insira um CPF entre aspas aqui.
 
 function validaCPF(cpf) {
     Object.defineProperty(this, 'cpfLimpo', {
