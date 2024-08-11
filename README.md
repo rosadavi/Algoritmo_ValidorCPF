@@ -1,2 +1,2 @@
 # algoritmo-validando-cpf
- Algoritmo de validação de CPF,  se existe ou não.
+ Projeto com JavaScritp, algoritmo de validacao de CPF.
