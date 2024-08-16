@@ -1,2 +1,2 @@
 # algoritmo-validando-cpf
- Projeto com JavaScritp, algoritmo de validacao de CPF com nodeJS.
+ Projeto Node.js, algoritmo de validacao de CPF.
